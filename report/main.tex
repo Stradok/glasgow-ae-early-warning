@@ -1,0 +1,364 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+%\usepackage{natbib}
+% (subfiles and subcaption removed: unused here, and they slow compilation)
+\usepackage{url}
+\usepackage{hyperref}
+%\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+%\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{vmargin}
+\setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
+
+\usepackage{csquotes}% Recommended
+
+\usepackage[style=authoryear-ibid,backend=biber]{biblatex}
+
+\addbibresource{references.bib}% Syntax for version >= 1.2
+
+\title{Forecasting Weekly Accident and Emergency Attendance in Glasgow from Weather and Air-Quality Data: Towards an AI-Enhanced Early Warning System}	% Title
+\author{Muhammad Ahmer Khalid}		% Author
+\date{\today}	% Date
+
+% ---- TO CONFIRM BEFORE SUBMISSION (see README) ----
+\newcommand{\studentId}{S2354571}
+\newcommand{\degree}{BSc (Hons) AI \& Data Science}   % confirm programme
+\newcommand{\supervisor}{[Supervisor name]}           % fill in
+\newcommand{\secondmarker}{[Second marker name]}      % fill in
+\newcommand{\wordcount}{approx.\ 3830}                 % citations not counted (about 4000 if each is counted as 3 words); confirm with texcount
+\newcommand{\module}{MHW225671}
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\theauthor}
+\lhead{Weather-driven A\&E forecasting in Glasgow}
+\cfoot{\thepage}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+	\centering
+   % \vspace*{0.5 cm}
+    \includegraphics[width=4.2cm]{newlogo.png}\\[0.4 cm]
+    \text{Honours Project - \module}\\[0.5 cm]
+    \textsc{\LARGE INTERIM REPORT}\\[0.5 cm]
+    \text{2026-27} \\[0.5 cm]
+    \text{\large Department of Computer Science} \\[0.5 cm]
+	\text{ Submitted for the Degree of:}\\[0.2 cm]
+	\degree \\[0.5 cm]
+
+
+	\begin{minipage}{0.8\textwidth}
+		\begin{flushleft} \large
+            \emph{Project Title: }
+			\thetitle \\ [0.2 cm]
+            \emph{Name: }
+			\theauthor \\ [0.2 cm]
+            \emph{Student ID: }
+			\studentId \\ [0.2 cm]
+            \emph{Supervisor: }
+			\supervisor \\ [0.2 cm]
+            \emph{Second Marker: }
+			\secondmarker \\ [0.2 cm]
+            \emph{Word Count: }
+			\wordcount \\
+            \text{\small (excluding contents pages, figures, tables, references and appendices)} \\ [0.5 cm]
+            \small{“Except where explicitly stated, all work in this report, is my own original work and has not been submitted elsewhere in fulfilment of the requirement of this or any other award”} \\ [0.4 cm]
+            \emph{Signed by Student:} \rule{4.5cm}{0.4pt}
+			\end{flushleft}
+			%\end{minipage}~
+			%\begin{minipage}{0.4\textwidth}
+
+	\end{minipage}\\[0.2 cm]
+
+
+
+\vspace{3mm}
+
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushleft}
+			Name: \\
+			\theauthor
+			\end{flushleft}
+			\end{minipage}~
+			\begin{minipage}{0.4\textwidth}
+			\begin{flushright}
+			Date: \\
+			\thedate								% Date of declaration
+		\end{flushright}
+	\end{minipage}
+
+%	{\large \thedate}\\[2 cm]
+
+	\vfill
+
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\newpage
+\tableofcontents
+\listoftables
+\listoffigures
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 1. INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+\subsection{Background and motivation}
+Emergency departments (EDs) provide unscheduled care, and demand on them has risen steadily: in England, attendances reached 25.6 million in 2019, 12 million more than ten years earlier \parencite{vollmer2021}. Forecasting demand lets hospitals plan ahead of peaks, and weather is a candidate driver that is forecastable days in advance. In London, \textcite{corcuerahotz2020} found that Accident and Emergency (A\&E) attendances increased with temperature, with the highest risk in children and in the most deprived areas. A systematic review of 42 studies concluded that heatwaves are consistently associated with more ED admissions, while cold waves are linked mainly to respiratory and cardiovascular presentations, often with delayed effects \parencite{poshtmashhadi2025}. Air quality is a second candidate: \textcite{mebrahtu2023} associated nitrogen dioxide and fine particulate matter (PM\textsubscript{2.5}) above World Health Organization daily thresholds with more A\&E visits for respiratory illness.
+
+Scottish evidence is thinner. \textcite{wan2022} observed that UK research on temperature and health has mostly concentrated on England; for Scotland they estimated that all-cause mortality risk rose by about 10\% under extreme cold and 4\% under extreme heat. Operational warnings also differ by nation: the Heat-Health Alert service, run by the UK Health Security Agency (UKHSA) with the Met Office and impact-based since summer 2023, is described as covering England \parencite{metoffice_hha,roberts2025}. Public Health Scotland (PHS), meanwhile, publishes weekly attendances for each Scottish emergency department as open data \parencite{phs_weekly_ae}, so a Scottish study does not need patient-level records. A weekly horizon is used because PHS publishes weekly counts and because a week is long enough to adjust staffing yet short enough for weather forecasts to remain usable.
+
+\subsection{Problem statement and research gap}
+Whether weather actually improves ED forecasts is contested. A recent systematic review reports that adding weather, air-quality and calendar variables consistently improved performance and that machine learning outperformed classical time-series models \parencite{blanco2026}. Primary studies are less uniform: in S\~ao Paulo, models using temperature forecast no better than, and sometimes worse than, models using calendar variables alone \parencite{marcilio2013}, and \textcite{vollmer2021} found that linear models were often as good as gradient boosting or random forests. Evaluation practice is also uneven. The same review notes that few studies used external validation \parencite{blanco2026}, and a recent preprint on air-quality forecasting showed that model rankings reversed when a static split was replaced by rolling-origin evaluation against a persistence baseline \parencite{garciacrespi2026}.
+
+The searches made for this report (October--November 2026; Section~\ref{sec:lit}) found no published study forecasting weekly A\&E attendance from weather and air-quality data for Glasgow or elsewhere in Scotland. The searches were broad and noisy (Table~\ref{table:search}), so this does not prove that none exists, but it suggests the gap addressed here. The practical stake is a margin: a forecast that cannot beat last week's attendance gives planners no reason to collect or maintain weather feeds. The problem statement is therefore: \emph{it is not known whether weather and air-quality data improve short-term forecasts of Glasgow A\&E attendance beyond what recent attendance already provides.}
+
+\subsection{Aim, research question and hypothesis}\label{sec:aim}
+The \textbf{aim} is to investigate whether weather and air-quality data improve forecasts of weekly A\&E attendance in Glasgow, and to design a prototype early-warning tool in which a human officer reviews every alert before release. This keeps the project's original goal, an AI-enhanced early warning system for climate-related health risks, while narrowing the health outcome to one that open data can measure.
+
+The \textbf{research question} is: \emph{to what extent can machine-learning models using weather and air-quality data forecast weekly A\&E attendances at Queen Elizabeth University Hospital (QEUH) and Glasgow Royal Infirmary (GRI) more accurately than seasonal and last-week baselines and than the same model without weather, and which environmental factors contribute most?} The Royal Hospital for Children (RHC) is a secondary, exploratory case.
+
+The \textbf{hypotheses} separate two claims. H$_1$ (weather adds value): for one-week-ahead forecasts, a model with weather and air-quality features (M2) has a lower mean absolute error (MAE) than the same model without them (M1), tested at QEUH and GRI separately with the Diebold--Mariano test at the 5\% level, Holm-corrected for the two hospitals. H$_2$ (beats the baselines): M2 has a lower MAE than both a seasonal-naive and a last-week (persistence) baseline. The null hypotheses are no difference. A skill-score threshold for practical importance will be agreed with the supervisor once M1 has been measured. The second part of the question, differences between hospitals and drivers, is exploratory.
+
+\subsection{Objectives}
+The \textbf{secondary objectives} are research tasks, each reviewed in Section~\ref{sec:lit}:
+\begin{enumerate}
+\item investigate how weather and air quality relate to emergency care demand;
+\item investigate methods for forecasting ED demand;
+\item investigate how forecasts should be evaluated against baselines;
+\item investigate the data sources and their limitations;
+\item investigate early warning practice and responsible use of AI.
+\end{enumerate}
+The \textbf{primary objectives} are the project's deliverables:
+\begin{enumerate}
+\item build and quality-check a weekly Glasgow dataset (largely complete, Section~\ref{sec:prelim});
+\item establish baseline forecasts (complete);
+\item develop a generalised additive model (GAM) and a gradient-boosting model;
+\item evaluate them by rolling-origin testing, hospital by hospital;
+\item build an initial alert prototype with human approval (due 27 November 2026);
+\item analyse results and draw conclusions, including the case where weather adds nothing.
+\end{enumerate}
+
+\subsection{Scope and structure of this report}
+The project forecasts all-cause weekly attendance, because the open data contain no diagnoses. Results will describe total demand, not the heat-related or respiratory subsets. It covers Glasgow, uses one weather point for the city, and is predictive, not causal. The main models use reanalysis-based weather; a shorter experiment uses archived forecasts (Section~\ref{sec:methods}). Three contributions are intended: a reproducible weekly dataset with documented quality checks; a baseline-first evaluation that includes a no-weather control; and a prototype in which a human approves every alert. A null result, in which weather adds nothing, would still be a useful finding because it would show that simple recent-attendance models suffice. Section~\ref{sec:lit} reviews the literature and Section~\ref{sec:methods} describes the methods.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 2. LITERATURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Literature and technology review}\label{sec:lit}
+This is a focused review, not a systematic one. Sources were found through targeted searches of publisher, PubMed and preprint indexes in October--November 2026 (for example emergency department forecasting, weather, air pollution, A\&E attendance, rolling-origin evaluation, early warning) and by following reference lists. Peer-reviewed articles are preferred; the one preprint \parencite{garciacrespi2026} is flagged where used. Table~\ref{table:search} logs the searches used to look for Scottish work.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{1.8cm}|p{6.2cm}|p{1.6cm}|p{3.4cm}|}
+ \hline
+ Index & Query (shortened) & Hits & Outcome \\
+ \hline
+ Web search & Glasgow OR Scotland, emergency department attendances, weather, temperature, forecasting & 8 results screened & None was a weather-driven Scottish A\&E forecast \\
+ Europe PMC & (Glasgow OR Scotland OR Scottish) AND (ED terms) AND (weather OR temperature OR climate OR air pollution) AND (forecast* OR predict*) & 39,401 & Top six irrelevant; query too broad \\
+ Europe PMC & (Glasgow OR Scotland OR Scottish) AND (ED terms) AND (weather OR temperature) & 9,544 & Top six: no weather forecast \\
+ Europe PMC & ED AND forecast* AND (weather OR meteorolog*) AND Scotland & 106 & Top six irrelevant \\
+ \hline
+\end{tabular}
+\caption{Search log, 2 November 2026 (only top-ranked results were screened).}
+\label{table:search}
+\end{table}
+
+\subsection{Secondary objective 1: weather, air quality and emergency care demand}
+\textbf{Temperature.} The evidence that temperature shifts emergency demand is substantial but not uniform. In Greater London, \textcite{corcuerahotz2020} analysed daily A\&E attendances for 2007--2012 with seasonally adjusted Poisson regression and found a positive association with temperature, strongest in children and deprived areas. An earlier London study of emergency hospital admissions found no clear relation between total admissions and high temperatures, although respiratory and renal admissions, and admissions of children under five, rose in hot weather \parencite{kovats2004}. The two results may differ because outcomes (attendances versus admissions) and periods differ, so the effect depends on how demand is measured. Cold matters as well: the review of \textcite{poshtmashhadi2025} links cold waves to respiratory and cardiovascular presentations, often with delay. For Scotland, \textcite{wan2022} applied distributed lag non-linear models to 1974--2018 mortality data and found cold effects in all cities and regions, heat effects everywhere except northern Scotland, and higher risk in urban than rural areas and among the elderly. Mortality is not A\&E attendance, but the Scottish evidence suggests that a Glasgow model should represent cold as well as heat.
+
+\textbf{Air quality.} \textcite{mebrahtu2023} found that NO\textsubscript{2} and PM\textsubscript{2.5} above WHO thresholds raised the immediate risk of respiratory A\&E visits, with lagged effects persisting for up to 100 days, a warning that short windows can miss delayed exposure effects. In Germany, \textcite{weismann2023} modelled weekly aggregated emergency attendances from 33 hospitals during the 2020 lockdown: community mobility explained 63\% of the variation in visits and air quality and climate a further 6\%. The design is weekly, like this project, but the lockdown dominates it, a reminder that 2020 is atypical in the present data too.
+
+\textbf{Heat-focused machine learning.} Several studies predict heat-related outcomes with machine learning. \textcite{ogata2021} predicted heatstroke cases per 12 hours in 16 Japanese cities from weather information and an all-population patient registry; models using non-linear multivariable predictors and/or under-sampling and bagging predicted spikes well, with a mean absolute percentage error (MAPE) of 14.8\% for spikes in all cases against 43.0\% for a single-predictor GLM. \textcite{toure2025} compared random forest, XGBoost and GAMs for admissions at one hospital in Senegal and found a delayed effect of three to five days, with random forest best (R\textsuperscript{2} 0.51--0.72). \textcite{javari2026} used XGBoost to predict prolonged stay (over seven days) among cardiovascular hospitalisations in Isfahan, Iran (area under the curve 0.84), with heat index and age most influential.
+
+\textbf{Critical discussion.} Most heat-specific machine-learning work comes from hotter climates and targets heat-related diagnoses, not all-cause attendance. Glasgow's thermal regime is very different: Section~\ref{sec:prelim} reports only 24 days at or above 25$^\circ$C in twelve years of reanalysis data. Infection is a further confounder: \textcite{kovats2004}, \textcite{corcuerahotz2020} and \textcite{murtas2022} all adjust for influenza, but the open weekly data used here contain no infection counts, so seasonal infection waves can masquerade as weather effects. Week-of-year terms only partly remove this, and open respiratory-surveillance data will be sought as a covariate if suitable data exist. The lag findings (three to five days; up to 100 days for pollution) imply that a weekly window can hold short lags inside the week but not across it, so lagged weekly features are needed. These points shape the design: model cold as well as heat, include lags, and treat air quality as secondary.
+
+\subsection{Secondary objective 2: methods for forecasting emergency department demand}
+A systematic review of eleven studies from 2019--2025 found that classical models such as ARIMA remain in use but machine learning (XGBoost, random forest) and deep learning (LSTM, CNN) showed higher accuracy, especially for high-dimensional, non-linear data, and that adding weather, air quality and calendar variables consistently improved performance; reported MAPE ranged from 3\% to 18\%, few studies used external validation and only a minority used explainable methods \parencite{blanco2026}.
+
+Primary studies complicate this picture. \textcite{vollmer2021} compared machine-learning and linear models for forecasting ED attendances 1, 3 and 7 days ahead and concluded that generalised linear models are often better than, or as good as, gradient boosting and random forests, although stacking diverse models gave more robust predictions. \textcite{marcilio2013} compared GLM, GEE and SARIMA models of daily visits in S\~ao Paulo: GLM and GEE beat SARIMA, but adding temperature gave worse or similar forecasts than calendar variables alone. That result rests on a three-month test window at a single hospital, so it may not generalise. \textcite{sudarshan2021} built random forest, LSTM and CNN models that include meteorological and calendar information; CNN was best three days ahead (MAPE 9.24\%) and LSTM seven days ahead (8.91\%) using weather forecasts. As summarised in its abstract, this study does not compare models with and without weather, so it cannot show what weather adds. \textcite{jilani2019} forecast attendance at four UK EDs with fuzzy time-series, ARIMA and neural-network models, with MAPE of 2.63--4.72\% for daily and 2.01--2.81\% for monthly models.
+
+The closest study to this project is \textcite{murtas2022}, which is adopted here as the \emph{base paper}. Using all ED visits to five large hospitals in Milan from 2014 to 2019, they fitted regression models with ARIMA errors using day of week, seasonality, meteorological and environmental variables, influenza and festivities, achieved a MAPE below 8.1\%, and used the results to establish a two-day ED warning system based on indicators of high demand. This project differs in four ways: weekly rather than daily data; a Scottish setting; machine-learning models alongside an interpretable GAM; and explicit evaluation against persistence under rolling-origin testing.
+
+\textbf{Critical discussion.} Reviews and primary studies disagree about whether weather helps and whether machine learning wins. Reported errors are not comparable, because horizons (daily, weekly, monthly), volumes and metrics differ. One plausible reading is that the answer depends on the baseline: studies with strong linear or calendar baselines find small gains \parencite{vollmer2021,marcilio2013}, while a review of eleven studies reports consistent gains \parencite{blanco2026}. Because the data here are weekly, with roughly 600 observations per hospital, deep learning is not pursued; this is a design judgement, not a finding from the literature. The candidate models are a GAM, valued for interpretable smooth effects \parencite{hastie1986}, and gradient-boosted trees (XGBoost; \cite{chen2016}), the most widely used machine-learning method in the studies above.
+
+\subsection{Secondary objective 3: evaluating forecasts against baselines}
+Evaluation design can change conclusions. \textcite{tashman2000} reviews out-of-sample tests of forecasting accuracy, and \textcite{cerqueira2020} compare methods for estimating the performance of time-series forecasting models empirically; both motivate testing only on data that post-date the training period. Simple benchmarks, the naive forecast (last observed value) and the seasonal-naive forecast (value one season earlier), are standard in forecasting practice \parencite{hyndman2021}. Here the last-week baseline is the persistence forecast, and the seasonal baseline repeats the value of the same week one year earlier.
+
+The preprint of \textcite{garciacrespi2026} shows why this matters. Forecasting daily PM10 at one urban background station, they found that XGBoost looked good one to seven days ahead under a static chronological split, but under rolling-origin evaluation with monthly updates it was not consistently better than persistence at short and intermediate horizons, while SARIMA remained positively skilled. It is a preprint from a different domain, so it is used as a methodological warning, not as evidence about A\&E demand. \textcite{diebold1995} introduced a test for comparing the accuracy of two forecasts, which is adopted here. Skill relative to persistence is reported as $1-\mathrm{MAE}_{\text{model}}/\mathrm{MAE}_{\text{persistence}}$, so positive values mean improvement.
+
+MAE is read directly in attendances per week; MAPE allows comparison between hospitals of different size but is unstable when counts are low, as in the flagged weeks. Both are reported with the skill score.
+
+\subsection{Secondary objective 4: data sources and their limitations}
+\textbf{Hospital data.} PHS publishes weekly A\&E activity by treatment location under the UK Open Government Licence \parencite{phs_weekly_ae}. Its site list records that QEUH replaced the Southern General Hospital in May 2015 and that the Royal Hospital for Children moved to the QEUH campus in June 2015 \parencite{phs_ae_sites}, so early-2015 series are not comparable. The weekly resource holds attendance counts and waiting-time measures, with no diagnosis or age breakdown.
+
+\textbf{Weather.} Open-Meteo's historical weather API serves ERA5, ERA5-Land and ECMWF IFS data, with a five-day delay for the reanalysis products \parencite{openmeteo_hist,zippenfenig2024}. In a test for Glasgow, its default output differed from both ERA5 and ERA5-Land, so a single model (ERA5-Land, about 11 km) is requested explicitly to keep the series homogeneous. ERA5 is a global reanalysis that combines model data with observations to give consistent, gap-free fields \parencite{hersbach2020}. Open-Meteo limits free use to non-commercial work with fewer than 10,000 calls a day, which suits an honours project but must be revisited before any operational use.
+
+\textbf{Air quality.} Open-Meteo air quality is modelled, not measured: it uses Copernicus Atmosphere Monitoring Service (CAMS) data, at about 11 km resolution for the European reanalysis from 2013, and requires attribution to CAMS and Open-Meteo \parencite{openmeteo_aq}. It cannot capture street-level pollution at a particular hospital.
+
+\textbf{Forecast weather.} A realistic early-warning test needs forecasts, not hindsight. Open-Meteo's archived forecasts start around 2022, and the provider warns that model changes make them unsuitable for long series \parencite{openmeteo_hf}. The forecast-weather experiment is therefore limited to about four years.
+
+\subsection{Secondary objective 5: early warning systems and responsible AI}
+England's Heat-Health Alert service forewarns of periods of high temperature. Since summer 2023 it has been impact-based: when forecast temperatures reach thresholds, the Met Office and UKHSA assess likely impacts before deciding whether to issue a yellow, amber or red alert \parencite{metoffice_hha}, and \textcite{roberts2025} evaluated the transition through stakeholder perspectives. These alerts are triggered by temperature thresholds and an impact assessment; they are not forecasts of hospital attendance, and the service is described as covering England. This review found no equivalent hospital-demand alert for Scotland, although absence from a focused search is not proof.
+
+Responsible-AI guidance for early warning is broadly consistent. \textcite{tiggeloven2025} reviewed AI methods across the four pillars of the Early Warning for All framework (risk knowledge, forecasting, warning dissemination and communication, and response preparedness), identified gaps in knowledge, application and policy, and called for responsible, inclusive, people-centred frameworks. \textcite{reichstein2025}, in a perspective article, advocate user-centric interfaces, causal AI to avoid spurious predictions, and the FATES principles (fairness, accountability, transparency, ethics and sustainability). \textcite{blanco2026} add that few ED forecasting studies use explainable methods. The first two papers draw mainly on natural-hazard systems, not health-system demand, so they are used here for principles, not as evidence about A\&E forecasting. Three design consequences follow: the tool supports a human decision rather than replacing it; predictions are explained (GAM smooths, feature importance); and because the models are predictive, not causal, results are not read as proof that weather causes attendances.
+
+\subsection{Summary: gaps that shape the project}
+The review identifies five gaps. First, no Scottish weekly weather-driven A\&E forecast was found. Second, evidence is conflicting on whether weather improves ED forecasts at all \parencite{marcilio2013,blanco2026}. Third, evaluation is often weak against persistence \parencite{garciacrespi2026}. Fourth, the forecasting studies reviewed here mostly work at daily horizons (Jilani also at monthly); weekly forecasting from weather was not among them. Fifth, existing alerts are temperature-threshold based and described as covering England only. These gaps justify the hypothesis (Section~\ref{sec:aim}) and the evaluation-centred method.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 3. METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methods}\label{sec:methods}
+
+\subsection{Research method}
+The project follows a quantitative \emph{develop-and-test} method: build a data pipeline, forecasting models and an alert prototype, then evaluate them against pre-specified baselines on held-out data. This fits the aim, which asks whether an artefact improves on simple alternatives. Alternatives were considered. An epidemiological exposure--response study with distributed lag non-linear models \parencite{gasparrini2010,wan2022} is the standard way to characterise how temperature relates to health, but it is not designed around out-of-sample forecast accuracy; its core idea, smooth non-linear lagged effects, is retained through GAM terms. Deep learning was rejected because the weekly series are short. A qualitative planner study is future work.
+
+\subsection{Technical methods}
+\subsubsection{Data and preparation}
+Table~\ref{table:sources} lists the sources. Weekly attendances for QEUH (G405H), GRI (G107H) and RHC (G513H) are downloaded through the PHS open-data API using the ``Unplanned'' category. The ``All'' category adds new planned attendances, which PHS records only from December 2020, so it has a definition break; planned attendances were 0.9\% (QEUH) and 0.8\% (GRI) of ``All'' in 2024 and 2.4\% and 1.5\% in 2026 to October. Daily weather (mean, maximum and minimum temperature, relative humidity, precipitation) and hourly PM\textsubscript{2.5} and PM\textsubscript{10} for Glasgow city centre are aggregated to Monday--Sunday weeks to match PHS week-ending dates. Planned features are lagged attendance (1, 2 and 52 weeks), weekly weather summaries with one- and two-week lags, counts of days above and below thresholds (set from the GAM curves), air-quality means, week of year and holiday indicators. Weeks with attendance below 60\% of the hospital's median are flagged, and each analysis is run with and without them (Section~\ref{sec:prelim}).
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{2.8cm}|p{3.3cm}|p{3.0cm}|p{3.4cm}|}
+ \hline
+ Source & Content & Resolution & Terms \\
+ \hline
+ PHS weekly A\&E & Unplanned attendances per hospital & Weekly, 2015 onwards & UK Open Government Licence \\
+ Open-Meteo historical weather (ERA5-Land) & Temperature, humidity, rain & Daily, about 11 km (aggregated to weeks) & Non-commercial, attribution \\
+ Open-Meteo air quality & PM\textsubscript{2.5}, PM\textsubscript{10} (modelled, CAMS) & Hourly, about 11 km, from 2013 & Attribute CAMS and Open-Meteo \\
+ Open-Meteo archived forecasts & Forecast weather (planned test) & Lead times to 7 days, from about 2022 & Model changes over time \\
+ \hline
+\end{tabular}
+\caption{Data sources.}
+\label{table:sources}
+\end{table}
+
+\subsubsection{Forecasting models}
+Two baselines are used: B1, seasonal naive (same week one year earlier) and B2, last week (persistence). Three models follow: M1, a GAM with autoregressive and calendar terms only (the no-weather control); M2, M1 plus weather and air-quality terms; and M3, XGBoost with all features. Comparing M1, M2 and M3 isolates what weather adds, which is the point of H$_1$. Regression with ARIMA errors, as in the base paper \parencite{murtas2022}, is a natural further comparator (M0) and will be added if time allows; it is kept out of the core set so that the evaluation stays focused on the weather question. Hyperparameters are tuned only inside training windows. Implementation will use Python, with pandas for data handling, a GAM library (pyGAM or statsmodels) and the XGBoost library \parencite{chen2016}, because these are open, scriptable and reproducible, and match the model families in the literature.
+
+\subsubsection{Evaluation design}
+Models are evaluated by rolling-origin testing with an expanding window of at least five years: at each origin the model is refitted and forecasts the next week. The primary metric is MAE, with MAPE and the persistence skill score reported alongside, and H$_1$ is tested by comparing M2 with M1, and H$_2$ by comparing M2 with each baseline, using the Diebold--Mariano test at the 5\% level \parencite{diebold1995} with Holm correction across the two adult hospitals. For the alert, a high-pressure week is one above the 90th percentile of the previous 52 weeks, and precision, recall and false alarms per month are reported. In the forecast-weather experiment, models use archived forecasts at lead times of up to seven days instead of reanalysis weather \parencite{openmeteo_hf}, over about 2022 to 2026. Drivers are explained through GAM smooth terms and permutation importance for XGBoost.
+
+\subsubsection{Alert prototype}
+Initial functional requirements are: (R1) fetch the latest attendance and weather forecast; (R2) produce a one-week forecast and a low, medium or high risk class; (R3) show the main drivers; (R4) require an officer's approval, with a log, before any alert is released. Non-functional requirements are transparency and reproducibility (versioned code). Figure~\ref{fig:pipeline} shows the flow.
+
+\begin{figure}[h!]
+\centering
+\small
+\fbox{\parbox{2.9cm}{\centering Open data\\(PHS, Open-Meteo)}} $\rightarrow$
+\fbox{\parbox{2.9cm}{\centering Weekly dataset\\and checks}} $\rightarrow$
+\fbox{\parbox{2.9cm}{\centering Baselines,\\GAM, XGBoost}}\\[0.3cm]
+$\downarrow$\\[0.1cm]
+\fbox{\parbox{2.9cm}{\centering Rolling-origin\\evaluation}} $\rightarrow$
+\fbox{\parbox{2.9cm}{\centering Risk class\\(low, medium, high)}} $\rightarrow$
+\fbox{\parbox{2.9cm}{\centering Officer approves\\alert}}
+\caption{Planned pipeline from open data to a human-approved alert.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{Preliminary work}\label{sec:prelim}
+Preliminary work has built the dataset and measured the baselines. Two scripts (\texttt{build\_dataset.py}, \texttt{quality\_and\_baseline.py}) pull the data and produce Tables~\ref{table:quality} and~\ref{table:baselines}. The baselines use only past attendance. The weather in the dataset is observed (reanalysis), so models that use it would be nowcasts; the forecast-weather experiment (Section~\ref{sec:methods}) addresses this.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{4.6cm}|p{9.2cm}|}
+ \hline
+ Check & Result \\
+ \hline
+ Coverage & 609 weeks, 22 Feb 2015 to 18 Oct 2026; no gaps; no missing values \\
+ Mean weekly unplanned attendance & QEUH 1812; GRI 1650; RHC 1251 \\
+ Weeks below 60\% of median (flag rule) & QEUH 18 (13 in Feb--May 2015, 5 in spring 2020); GRI 8 (spring 2020); RHC 36 (2015; March--August 2020; Dec 2020--Feb 2021) \\
+ Hottest day, 2015--2026 (ERA5-Land reanalysis, not station records) & 28.1$^\circ$C; 24 days at or above 25$^\circ$C; 5 at or above 27$^\circ$C; none at 30$^\circ$C \\
+ \hline
+\end{tabular}
+\caption{Data quality checks on the weekly Glasgow dataset. Reanalysis smooths extremes, so station maxima may be higher.}
+\label{table:quality}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|l|c|c|c|c|}
+ \hline
+ Hospital & Seasonal MAE & Seasonal MAPE & Last-week MAE & Last-week MAPE \\
+ \hline
+ QEUH & 85 & 4.4\% & 71 & 3.6\% \\
+ GRI & 80 & 5.0\% & 68 & 4.3\% \\
+ RHC & 106 & 7.3\% & 97 & 6.8\% \\
+ \hline
+\end{tabular}
+\caption{Baseline errors on 146 test weeks (January 2024 to October 2026), trained on earlier data.}
+\label{table:baselines}
+\end{table}
+
+Four findings follow. First, the last-week baseline beats the seasonal one at every hospital, so persistence is the harder benchmark; its MAPE of 3.6--4.3\% at the two adult EDs leaves little room, so any gain from weather will be small in absolute terms. Second, hot days are rare in the reanalysis data, which supports modelling cold as well as heat; this should be spot-checked against Met Office station records. Third, flagged weeks cluster around the 2015 site changes recorded by PHS \parencite{phs_ae_sites} and the 2020 pandemic, with a further unexplained run at RHC from December 2020 to February 2021; this justifies the rule-based flagging, and the early-2015 QEUH weeks come from its predecessor site. Fourth, raw correlations between weekly mean temperature and attendance were +0.34 (QEUH), +0.25 (GRI) and $-0.04$ (RHC), but these mix seasonality, trend and the 2015 site change and are not evidence of a weather effect. A 15\% improvement over persistence at QEUH would mean an MAE of about 60; the practical threshold will be agreed with the supervisor.
+
+\subsection{Development process, plan and risks}
+Development is incremental and prototype-driven: each iteration adds one capability and is evaluated before the next begins. Table~\ref{table:plan} shows the plan against the module deadlines, and Table~\ref{table:risks} lists the main risks with their likelihood and impact.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{4.2cm}|p{9.6cm}|}
+ \hline
+ Date & Milestone \\
+ \hline
+ 6 Nov 2026 & Interim report (3pm) \\
+ 7--20 Nov 2026 & Reproducible pipeline; baselines; GAM (M1, M2) \\
+ 27 Nov 2026 & Initial prototype (R1--R4) \\
+ Dec 2026 & XGBoost (M3); rolling-origin evaluation of M1--M3 \\
+ Jan 2027 & Ablation; per-hospital results; flagged-week sensitivity \\
+ Feb 2027 & Forecast-weather experiment; alert evaluation \\
+ Mar 2027 & Analysis and write-up \\
+ 9 Apr 2027 & Final report (3pm) \\
+ 15 Apr 2027 & Presentation, recorded (3pm) \\
+ \hline
+\end{tabular}
+\caption{Project plan.}
+\label{table:plan}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{3.6cm}|p{1.9cm}|p{8.1cm}|}
+ \hline
+ Risk & Likelihood / impact & Mitigation \\
+ \hline
+ Weather adds no value over the no-weather model M1 & Medium / high & Report as a finding; still deliver the tool and the evaluation \\
+ Archived forecasts unsuitable or too short & High / medium & Use lagged observed weather for the main models; limit the test to about four years \\
+ Distorted or redefined data (site changes, 2020, unexplained RHC run) & Medium / medium & Rule-based flags; run with and without flagged weeks; use ``Unplanned'' throughout \\
+ Time pressure before 27 Nov & High / high & Prototype scoped to R1--R4; evaluation work follows \\
+ Ethics screening not yet confirmed & Medium / medium & Ask the supervisor before further analysis is reported \\
+ Data terms (non-commercial limits) & Low / medium & Academic use only; attribute sources; review before any operational use \\
+ \hline
+\end{tabular}
+\caption{Main risks.}
+\label{table:risks}
+\end{table}
+
+\subsection{Ethical, legal and professional considerations}
+All data are open, aggregated hospital counts and weather records, with no individual-level data; sources are used under their stated licences and attributed. Whether the School requires ethics screening for open secondary data has not yet been confirmed; the supervisor will be asked before further analysis is reported. Professionally, the tool is decision support: a human officer approves every alert, and the models are not presented as causal. Results are reported by hospital, and negative results will be reported. The models are small and run on a laptop, which limits the environmental cost of the work.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addcontentsline{toc}{section}{References}
+\printbibliography
+
+\end{document}

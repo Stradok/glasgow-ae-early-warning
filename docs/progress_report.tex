@@ -1,0 +1,245 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs,tabularx,longtable,array}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{ok}{HTML}{1B7F3B}
+\definecolor{warn}{HTML}{B36B00}
+\definecolor{bad}{HTML}{B3261E}
+\definecolor{ink}{HTML}{1F2A44}
+\definecolor{soft}{HTML}{EEF1F6}
+\newcommand{\done}{\textcolor{ok}{\textbf{Done}}}
+\newcommand{\partly}{\textcolor{warn}{\textbf{Partly}}}
+\newcommand{\todo}{\textcolor{bad}{\textbf{Not done}}}
+\newcommand{\file}[1]{\texttt{\small #1}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\titleformat{\section}{\Large\bfseries\color{ink}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{ink}}{\thesubsection}{0.6em}{}
+\setlist{itemsep=2pt,topsep=4pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\renewcommand{\arraystretch}{1.25}
+\pagestyle{fancy}\fancyhf{}
+\lhead{\small Honours project MHW225671: progress report}
+\rhead{\small 17 November 2026}
+\cfoot{\small\thepage}
+
+\begin{document}
+
+{\LARGE\bfseries\color{ink} Progress report\par}
+\vspace{2pt}
+{\large Forecasting weekly A\&E attendance in Glasgow from weather, with a human-approved early-warning tool\par}
+\vspace{4pt}
+Honours project, module MHW225671 \quad Student: Muhammad Ahmer Khalid \quad Status as of 17 November 2026
+
+\vspace{6pt}
+\colorbox{soft}{\parbox{\dimexpr\linewidth-2\fboxsep}{%
+\textbf{In short.}
+The analysis and the prototype are built and their tests pass (re-run 17 November).
+The interim report is written.
+The final report is mostly unwritten, the presentation is not started, and \textbf{nothing has been approved by the supervisor yet}.
+The next deadline is the initial prototype on \textbf{27 November 2026}, 10 days from now.
+The biggest open risk is not technical: nobody has checked the university's rules on AI-assisted writing, and the report carries a declaration that the work is the student's own.}}
+
+\section{What the project is}
+The project asks whether weather helps to forecast how many people attend A\&E each week at Glasgow hospitals, one week ahead.
+It then turns the forecast into a small early-warning tool, in which a named officer must approve every alert before it is released.
+
+\begin{itemize}
+\item \textbf{Hospitals:} Queen Elizabeth University Hospital (QEUH) and Glasgow Royal Infirmary (GRI) are the main sites. The Royal Hospital for Children (RHC) is a secondary site.
+\item \textbf{Data:} weekly attendance counts published by Public Health Scotland, and weather and air-quality data from Open-Meteo. All of it is open and aggregated. There is no patient-level data.
+\item \textbf{Change from the proposal:} the original proposal was about daily heat illness in one city. With Ahmer's agreement it was changed to weekly A\&E attendance, because that is what the open data supports. The supervisor has not yet confirmed this change.
+\end{itemize}
+
+\section{University dates}
+\begin{tabularx}{\linewidth}{@{}P{3.3cm}P{3.5cm}L@{}}
+\toprule
+\textbf{Deadline} & \textbf{What is due} & \textbf{Where it stands} \\
+\midrule
+6 Nov 2026, 3pm \newline (passed) & Interim report &
+\done{} as a document: PDF and Word versions exist. I cannot confirm that it was submitted; Ahmer should confirm. Supervisor, second marker, signature and date were left blank for him to fill. \\
+27 Nov 2026 \newline (10 days) & Initial prototype &
+\done{} as software: built and tested. Ahmer still has to run it himself, understand it, and be able to demo it. \\
+9 Apr 2027, 3pm & Final report \newline (4,000 words) &
+\partly{}: only the results chapter is drafted (about 1,300 words). Everything else needs writing or updating. \\
+15 Apr 2027, 3pm & Recorded presentation &
+\todo{}. The figures it will need already exist. \\
+\bottomrule
+\end{tabularx}
+
+The 4,000-word limit excludes the contents pages, figures, tables, references and appendices.
+
+\section{What has been built}
+\subsection{Analysis (folder \file{analysis/})}
+\begin{itemize}
+\item A data pipeline that downloads and cleans the attendance, weather and air-quality data.
+\item Forecasting models, from simple baselines (``same as last week'') up to a machine-learning model with weather (called M2), and a temperature-only version (M2t) that the prototype uses.
+\item A fair test: each week is forecast using only data that was available before that week. The test period is 146 weeks, from 7 January 2024 to 18 October 2026.
+\item Robustness checks, including a test that feeds the model real archived weather \emph{forecasts} instead of observed weather (135 weeks), because a live tool would only have forecasts.
+\item An evaluation of the alerts themselves: how often an alert is right, and how many high-pressure weeks it catches.
+\item Figures and tables for the report, generated by script.
+\end{itemize}
+
+\subsection{Prototype (folder \file{prototype/})}
+\begin{itemize}
+\item A command-line tool and a local web page. It shows the forecast for each hospital, a risk level (low, medium, high), a chart, and the factors driving the forecast.
+\item Officers log in with a password. A high-risk forecast creates an alert that an officer must approve or reject. Only an approved alert can be released.
+\item Every action is written to a log that is chained so that edits to past entries are detected.
+\item Short commands (\texttt{make setup}, \texttt{make guide}, \texttt{make demo}, \texttt{make test}) and a \texttt{guide} command that checks the set-up and names the next step.
+\item Credits for both data sources, and a ``not endorsed by Public Health Scotland or the NHS'' line, on the sign-in page and the dashboard.
+\item A demo mode with a guided tour, a light and dark theme, and a layout that works on a phone.
+\item It runs only on the user's own computer. It is tested on Linux, probably works on macOS, and does not work on Windows.
+\end{itemize}
+
+\subsection{Report (folder \file{report/})}
+\begin{itemize}
+\item The interim report in LaTeX, PDF and Word.
+\item A draft results, discussion and conclusion chapter for the final report.
+\item A checked reference list.
+\end{itemize}
+
+\section{What the results say}
+\begin{tabularx}{\linewidth}{@{}P{5.2cm}L@{}}
+\toprule
+\textbf{Question} & \textbf{Answer} \\
+\midrule
+Does the model beat ``same as last week''? & Yes. Its error is 22.5\% lower at QEUH and 16.0\% lower at GRI. \\
+Does weather add anything? & Yes at QEUH: 12.9\% lower error than the same model without weather. At GRI the result is inconclusive (7.1\%, borderline significance). \\
+Which part of the weather matters? & Temperature, mainly the change from one week to the next. Air quality, humidity and rain add nothing. This is an association, not proof that temperature causes attendance. \\
+Does it still work with forecast weather? & At QEUH, yes. At GRI only partly: the gain falls to 13.2\%, below the 15\% target. \\
+How good are the alerts? & Modest. They catch about a third to a half of high-pressure weeks. At QEUH about 6 in 10 alerts are right, with about one false alarm every 8 months. They are a prompt for a person to look, not a decision. \\
+\bottomrule
+\end{tabularx}
+
+The honest summary is that the forecast is clearly useful at QEUH, weaker at GRI, and the alerts are a modest aid.
+The report says this plainly; it does not oversell.
+
+\section{What has been tested}
+These checks were last run on 17 November 2026 and all passed.
+
+\begin{tabularx}{\linewidth}{@{}P{5.2cm}P{2.6cm}L@{}}
+\toprule
+\textbf{Check} & \textbf{Result} & \textbf{What it covers} \\
+\midrule
+Analysis tests & 18 of 18 pass & The pipeline and models, including that no forecast uses data from the future. \\
+Number check & 112 of 112 match & Every number quoted in the results write-up is recomputed from the result files. \\
+Prototype tests & 97 of 97 pass & Login, lockout, approval and release rules, the log, the web pages, data credits on every page, the start-up guide, and bad or hostile input. \\
+Browser check & Passed & Tour, light and dark theme, phone width, and the approve-then-release flow, checked by hand in a browser on 15 November. \\
+Upload dry run & 80 files, 0 private & A trial of what would go to GitHub. No admin papers, accounts, or other students' work would be included. \\
+\bottomrule
+\end{tabularx}
+
+Independent code reviews were also done on the analysis claims, the login code, and the web page.
+Their findings were fixed.
+Two limits apply: the reviewers were AI reviewers, not people, and the last round of fixes was confirmed by tests but not reviewed again.
+
+\textbf{Not tested:}
+\begin{itemize}
+\item The prototype has not been run by Ahmer or by anyone outside development.
+\item No real user (a hospital planner, for example) has tried it.
+\item It has not been tested on macOS or Windows.
+\item The Word version of the interim report has not been opened in Word to check the layout.
+\item The draft results chapter builds without errors (checked 17 November in a separate test build), but it is not yet part of a full final-report document.
+\end{itemize}
+
+\section{What has been approved}
+Very little, and this is the section to read carefully.
+
+\begin{tabularx}{\linewidth}{@{}P{6.2cm}P{2.6cm}L@{}}
+\toprule
+\textbf{Item} & \textbf{Approved?} & \textbf{By whom / note} \\
+\midrule
+Change of topic to weekly A\&E attendance & \partly{} & Ahmer agreed. Supervisor has not confirmed. \\
+Main reference paper (Murtas et al., 2022) & \todo{} & Chosen provisionally. Supervisor to confirm. \\
+Hypotheses and the 15\% target & \todo{} & Supervisor to confirm the wording and the target. \\
+Ethics: public data may be used & \partly{} & A lecturer's email (16 Nov) says the form is still open and asks for evidence that the licence terms allow the use and that the data is aggregated. The evidence is written (\file{docs/ethics\_evidence.md}). Ahmer still has to submit the application. \\
+Use of AI help in the written report & \todo{} & University policy not yet read. \\
+Interim report content & \todo{} & No feedback from the supervisor has reached us. \\
+Use of the temperature-only model in the tool & \todo{} & It was chosen after seeing results, so it needs to be declared and agreed. \\
+\bottomrule
+\end{tabularx}
+
+\section{What still needs to be done}
+\subsection{Before 27 November 2026 (prototype)}
+\begin{enumerate}
+\item \textbf{Ahmer} runs the prototype on his own machine, following the quick start in \file{README.md}.
+\item \textbf{Ahmer} learns it well enough to explain each part and answer questions about how the forecast is made.
+\item \textbf{Ahmer} confirms how the prototype is to be handed in or demonstrated, and that the interim report was submitted.
+\item \textbf{Ahmer} submits the ethics application, using \file{docs/ethics\_evidence.md}.
+\item Create a private GitHub repository and upload the code. The repository should stay private because the report carries the student's name and ID.
+\end{enumerate}
+
+\subsection{Urgent, no fixed date}
+\begin{enumerate}
+\item \textbf{Read the university's policy on AI-assisted writing.} This decides how the final report can be written. If it allows AI-drafted text with disclosure, a full draft can be prepared for Ahmer to revise. If it does not, Ahmer must write the text himself, with help limited to structure, tables, figures, checking and feedback.
+\item \textbf{Meet the supervisor} and get answers on the items in Section 6. The lecturer's email also says the interim report does not commit the project to everything stated in it, so the topic change is not a problem in itself.
+\item Fill in the supervisor and second-marker names, degree, year, signature and date.
+\end{enumerate}
+
+\subsection{Before 9 April 2027 (final report)}
+\begin{enumerate}
+\item Write or update the introduction, literature review and methods. The interim versions are out of date in several places:
+  \begin{itemize}
+  \item how hot and cold weeks are defined (18.3\,\textdegree C and $-0.7$\,\textdegree C, from data before 2024);
+  \item bank holidays now follow the Scottish calendar;
+  \item the machine-learning forecast is an average of three runs;
+  \item extra models were added to separate the effect of each weather variable;
+  \item the forecast-weather test covers 135 weeks from March 2024, not ``2022 to 2026'' as planned.
+  \end{itemize}
+\item Read the key papers in full. So far only their abstracts have been read, so the literature review cannot yet be trusted.
+\item Add literature on infections (flu, COVID, RSV) as an alternative explanation for the temperature effect.
+\item Rewrite the draft results chapter in Ahmer's own words and bring it within the word limit with the other chapters.
+\item Decide whether to refresh the data near the deadline. Doing so would change every number in the report.
+\item Check the final-report template and the marking scheme.
+\end{enumerate}
+
+\subsection{Before 15 April 2027 (presentation)}
+\begin{enumerate}
+\item Write the script and slides.
+\item Record a demo of the prototype.
+\item Record the presentation.
+\end{enumerate}
+
+\section{Risks}
+\begin{tabularx}{\linewidth}{@{}P{5.4cm}L@{}}
+\toprule
+\textbf{Risk} & \textbf{Why it matters and what to do} \\
+\midrule
+Academic integrity & The report declares the work is the student's own. Much of the code and draft text was produced with AI help. Read the policy, disclose what it requires, and make sure Ahmer can explain and defend everything. \\
+Ahmer cannot explain the work & A marker will ask questions at the demo and presentation. He needs time with the code and results well before each deadline. \\
+No supervisor sign-off & The topic change, base paper and ethics position could all be challenged late. Raise them at the next meeting. \\
+Weak result at GRI & Already reported honestly. It should stay that way; it is a finding, not a failure. \\
+Literature only read as abstracts & A claim about a paper could be wrong. Read the full texts before the literature review is final. \\
+\bottomrule
+\end{tabularx}
+
+\section{Where things are}
+\begin{tabularx}{\linewidth}{@{}P{7cm}L@{}}
+\toprule
+\textbf{File or folder} & \textbf{What it is} \\
+\midrule
+\file{README.md} & Overview, headline results, and how to run everything. \\
+\file{docs/HANDOVER.md} & Start here when taking over: what is done, what is left, rules. \\
+\file{docs/GETTING\_STARTED.md} & Step-by-step install and run guide with troubleshooting. \\
+\file{docs/ARCHITECTURE.md} & How it is built and why. \\
+\file{docs/ethics\_evidence.md} & Evidence for the ethics form. \\
+\file{docs/PROJECT\_STATUS.md} & Short status page and open decisions. \\
+\file{Makefile} & Short commands: run \texttt{make} to list them. \\
+\file{analysis/RESULTS.md} & Full results with every caveat. \\
+\file{analysis/figures/} & Figures for the report and slides. \\
+\file{prototype/README.md} & How to run and use the tool. \\
+\file{report/main.pdf} & Interim report. \\
+\file{report/final\_report\_results\_DRAFT.tex} & Draft results chapter for the final report. \\
+\file{docs/admin/}, \file{archive/} & Module papers and old material. Kept on this computer only; not for upload. \\
+\bottomrule
+\end{tabularx}
+
+\end{document}

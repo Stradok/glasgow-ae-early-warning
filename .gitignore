@@ -1,0 +1,33 @@
+# Python environments and caches
+.venv/
+.DS_Store
+*.bak
+*.synctex.gz
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local-only: officer accounts (password hashes), demo/real run output, re-pullable data, secrets
+prototype/accounts/
+prototype/output/
+prototype/data/
+*.lock
+.env
+
+# Not for the repository: personal admin papers, other people's sample reports, stale builds and zips
+archive/
+docs/admin/
+
+# LaTeX build artefacts (report/main.pdf is kept)
+report/*.aux
+report/*.bbl
+report/*.bcf
+report/*.blg
+report/*.fdb_latexmk
+report/*.fls
+report/*.lof
+report/*.log
+report/*.lot
+report/*.out
+report/*.run.xml
+report/*.toc
