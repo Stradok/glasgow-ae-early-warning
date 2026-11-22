@@ -54,8 +54,9 @@ recorded presentation 15 Apr 2027 (3pm).
    quote a number in a document, find it in `analysis/results/results_tables.md` first. Run `make test` after any change.
 3. **Do not re-run the experiments casually.** `make reproduce` rewrites `analysis/results/` and can change numbers. The report
    would then no longer match. Ask first.
-4. **Keep the repository private** while the report carries the student's name and ID. Do not commit `archive/`,
-   `docs/admin/`, `prototype/accounts/`, `prototype/output/` or `prototype/data/`. The `.gitignore` already excludes them.
+4. **The repository is public** (the student's choice). The report title page carries the student's name and ID, so the student should
+   decide whether that stays. Do not commit `archive/`, `docs/admin/`, `prototype/accounts/`, `prototype/output/` or `prototype/data/`.
+   The `.gitignore` already excludes them.
 5. **Supervisor sign-offs are still missing.** Nothing has been approved by the supervisor yet: the topic change, the
    base paper (Murtas et al., 2022, provisional), the hypotheses and the 15% practical target, and the ethics position.
    See `PROJECT_STATUS.md`.

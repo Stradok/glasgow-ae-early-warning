@@ -1,6 +1,7 @@
 # Weather, air quality and weekly A&E attendance in Glasgow
 
-Honours project MHW225671 (student: Muhammad Ahmer Khalid). It asks whether weather and air-quality data improve one-week-ahead
+Honours project MHW225671 (student: Muhammad Ahmer Khalid). **Status (22 Nov 2026):** analysis and prototype are finished and tested
+(18 + 97 tests, 112 of 112 quoted numbers confirmed); the final report is still to be written. It asks whether weather and air-quality data improve one-week-ahead
 forecasts of A&E attendance at Glasgow hospitals (QEUH, GRI, and RHC as a secondary site), and builds a prototype early-warning
 tool in which a named officer approves every alert. Decision support only: not clinically validated, predictive not causal.
 
@@ -43,7 +44,10 @@ To rebuild every result from the frozen data: `make reproduce` (about 10 minutes
 - This is a student research prototype. It is not endorsed by Public Health Scotland or the NHS.
 - Frozen analysis data are in `analysis/data/`; the prototype's live pulls go to `prototype/data/` (not committed).
 
-## Before sharing this repository
-- The report title page carries the student's name and ID: keep the repository **private** unless the student agrees otherwise.
-- No licence has been chosen. Add one (or none) deliberately; the report and data have their own terms.
-- `archive/` and `docs/admin/` (module papers, other students' sample reports, photos) are git-ignored on purpose.
+## Status, limits and licence
+- **Not validated or tried by staff.** Nobody outside the project has run the tool, no hospital staff have used it, and it is not clinically validated.
+  At GRI the weather gain is inconclusive and, with forecast weather, falls to 13.2%, below the 15% target set in advance.
+- **AI assistance.** Part of the code, analysis and draft text was produced with AI assistance (Claude Code). See `docs/HANDOVER.md`, section 4.
+- **Personal data.** The report title page (`report/`) carries the student's name and ID. `archive/` and `docs/admin/` (module papers, other
+  students' sample reports) are git-ignored on purpose and are not in this repository.
+- **Licence.** None has been chosen, so the code is under default copyright (all rights reserved). The data and the Open-Meteo output have their own terms (see above).

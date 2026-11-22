@@ -18,7 +18,7 @@ prototype. Read `docs/HANDOVER.md` first, then `docs/ARCHITECTURE.md`.
 - Do not commit, push, delete, or overwrite files without the user's explicit approval for that action.
 - The repository must stay free of private material. `archive/`, `docs/admin/`, `prototype/accounts/`, `prototype/output/`
   and `prototype/data/` are git-ignored on purpose. Never add them, and never print or commit passwords or `users.json`.
-- The report carries the student's name and ID. Do not publish it anywhere public.
+- The report carries the student's name and ID. The repository is public by the student's choice; do not publish the report anywhere else, and do not make further personal details public.
 - Numbers in documents come from `analysis/results/`; `make test` checks the ones in `analysis/RESULTS.md`. Do not run
   `make reproduce` unless asked: it rewrites the results.
 - Report text submitted by the student must be the student's own words. The university's AI-writing policy has not been
