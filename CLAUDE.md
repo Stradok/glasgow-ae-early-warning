@@ -7,7 +7,8 @@ prototype. Read `docs/HANDOVER.md` first, then `docs/ARCHITECTURE.md`.
 1. Check the machine: Linux or macOS, `python3`, `make`. Windows is not supported. Say so if something is missing.
 2. `make setup` (creates `analysis/.venv`, installs `analysis/requirements.txt`; needs internet, about 3 minutes).
 3. `make guide` and report the checklist. Do not create officer accounts: `make adduser NAME="..."` asks the human for a
-   password, so tell the human to run it themselves (in Claude Code: type `! make adduser NAME="Their Name"`).
+   password, so tell the human to run it themselves in a normal terminal, in the project folder (the `!` prefix in Claude Code
+   does not work: it has no terminal, so the password prompt fails with `EOFError`).
 4. `make test`. Expected: `18 passed`, `112 / 112 numbers confirmed`, `97 passed`. Show the real output. If it differs, say so.
 5. `make demo` starts the offline web page at http://localhost:8000. Tell the human to sign in and press "Take the tour".
    `make` on its own lists every command. Step-by-step guide with troubleshooting: `docs/GETTING_STARTED.md`.
