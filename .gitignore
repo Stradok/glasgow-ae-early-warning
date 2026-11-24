@@ -51,3 +51,7 @@ Finalreportinstructions/
 *.lof
 *.lot
 report/final/main.pdf
+
+# Ethics application forms (personal details): local only
+Application for Ethics Approval*.docx
+Ethics_Application*.docx
