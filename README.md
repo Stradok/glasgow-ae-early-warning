@@ -10,7 +10,7 @@ tool in which a named officer approves every alert. Decision support only: not c
 |---|---|
 | `analysis/` | Data pipeline, models (GAM, XGBoost), rolling-origin evaluation, robustness and forecast-weather experiments, figures, tables, 18 tests. **Start with `analysis/RESULTS.md`.** |
 | `prototype/` | The early-warning tool: forecast, low/medium/high risk class, drivers, officer approval with a tamper-evident log; command line and a local web page with login and a guided tour. 97 tests. See `prototype/README.md`. |
-| `report/` | Interim report (LaTeX, PDF, Word) and a draft results chapter for the final report. |
+| `report/` | Interim report (LaTeX, PDF, Word), a plan and a compilable skeleton for the final report (`final_report_PLAN.md`, `final/`), and a draft results chapter. |
 | `docs/` | Guides and status: **start with `docs/HANDOVER.md`** (taking over) or `docs/GETTING_STARTED.md` (running it). Index in `docs/README.md`. |
 
 ## Headline results (146 test weeks, 7 Jan 2024 to 18 Oct 2026; details and caveats in `analysis/RESULTS.md`)

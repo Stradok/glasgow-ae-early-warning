@@ -1,7 +1,7 @@
 # Handover: read this first
 
 For the teammate who will take over the documentation. The code and analysis are finished and tested. What remains is
-mostly writing, sign-offs, and things only the student can do. Date of this note: 17 November 2026.
+mostly writing, sign-offs, and things only the student can do. Date of this note: 17 November 2026; updated 24 November 2026 (final report is about 10,000 words; ethics guide read).
 
 ## 1. Get running (15 minutes)
 
@@ -29,7 +29,7 @@ recorded presentation 15 Apr 2027 (3pm).
 | # | Task | Notes |
 |---|---|---|
 | 1 | Prototype hand-in and demo | The student must run it, understand it, and demo it. You can help rehearse using `make demo`. |
-| 2 | Final report, 4,000 words | Contents, figures, tables, references and appendices are not counted. Only the results chapter has a draft. |
+| 2 | Final report, about 10,000 words (9,000 to 11,000; over 11,000 loses 10% of the mark) | Abstract, contents, figures, tables, references and appendices are not counted. Only the results chapter has a draft. Plan: `report/final_report_PLAN.md`. (The 4,000-word limit was the interim report's.) |
 | 3 | Update the report's introduction, literature and methods | List below. |
 | 4 | Read the key papers in full | So far only abstracts were read. See `report/sources_verification.md`. |
 | 5 | Recorded presentation | Not started. Figures are in `analysis/figures/`. |

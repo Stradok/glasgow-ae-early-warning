@@ -31,3 +31,23 @@ report/*.lot
 report/*.out
 report/*.run.xml
 report/*.toc
+
+# University material and recordings: local only
+Finalreportinstructions/
+*.mp4
+*.webm
+
+# LaTeX build artefacts anywhere (report/main.pdf and docs/progress_report.pdf are tracked and kept)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.toc
+*.lof
+*.lot
+report/final/main.pdf

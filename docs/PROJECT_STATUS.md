@@ -30,9 +30,9 @@ Read `docs/HANDOVER.md` first, then `docs/GETTING_STARTED.md`.
 
 ## Decisions for the student and supervisor
 1. Confirm the hypotheses are worded as intended and agree the practical threshold for H1 (the 15% target is met at QEUH and GRI with observed weather, at QEUH only with forecast weather).
-2. Submit the ethics application with the evidence in `docs/ethics_evidence.md`. A lecturer's email (16 Nov) says the form stays open and that public data needs evidence of licence terms and of aggregation or anonymisation; it also says the interim report does not bind the project to everything stated in it.
+2. Ethics. The Honours Ethics Guide (GCU Learn, read 24 Nov) lists analysis of anonymised public datasets and software built without participant testing as projects that do not normally need approval, but the "Does my project require Ethics Approval?" Decision Tool must still be completed (its outcome is saved to the Gradebook). If it says approval is required, the application form must be signed by the student and the supervisor. Ask the supervisor to confirm that using published NHS aggregate counts (no patients or staff recruited) is acceptable. Do not let anyone use the prototype as a test participant: user-testing a prototype does need approval. Evidence for the data terms and the aggregation is in `docs/ethics_evidence.md`; the final report must include proof of it. A lecturer's email (16 Nov) says the form stays open and that the interim report does not bind the project to everything stated in it.
 3. Decide whether to keep the temperature-only model M2t for the prototype (it was chosen after the ablation, a post-hoc choice; M2 is the pre-specified model).
-4. Check the final-report template and word limit; the draft results chapter is about 1,300 words.
+4. The final report is about 10,000 words (9,000 to 11,000; over 11,000 loses 10% of the mark), with six chapters. See `report/final_report_PLAN.md`. The draft results chapter is about 1,300 words.
 
 ## Before the final report
 - Update the interim methods text: hot/cold thresholds are percentiles of pre-2024 data (not GAM-derived); bank holidays use the Scottish calendar; XGBoost forecasts are the mean of 3 seeds; M3a and the ablation models exist; weather-for-target-week caveat.

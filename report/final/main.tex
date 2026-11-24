@@ -1,0 +1,122 @@
+% FINAL REPORT SKELETON: structure only, no report text.
+% Plan, marks and word budget: ../final_report_PLAN.md. Source: Final Report Guidance 26/27 and marking scheme.
+% Body text target: about 10,000 words (9,000 to 11,000; over 11,000 loses 10% of the mark).
+% The student writes the text, after checking the university's AI-writing policy (see ../../CLAUDE.md).
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{../images/}{../../analysis/figures/}}
+\usepackage{fancyhdr}
+\usepackage{vmargin}
+\setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
+\usepackage{csquotes}
+\usepackage[style=authoryear-ibid,backend=biber]{biblatex}
+\addbibresource{../references.bib}
+
+\title{Forecasting Weekly Accident and Emergency Attendance in Glasgow from Weather and Air-Quality Data: Towards an AI-Enhanced Early Warning System}
+\author{Muhammad Ahmer Khalid}
+\date{\today}
+
+% ---- FILL IN BEFORE SUBMISSION ----
+\newcommand{\studentId}{S2354571}                      % confirm
+\newcommand{\degree}{BSc (Hons) AI \& Data Science}    % confirm programme
+\newcommand{\supervisor}{[Supervisor name]}
+\newcommand{\secondmarker}{[Second marker name]}
+\newcommand{\wordcount}{[count the body text]}         % excluding abstract, contents, figures, tables, references, appendices
+\newcommand{\sdgs}{[SDGs this project aligns to]}      % new field on the final pro forma; discuss with supervisor
+\newcommand{\module}{MHW225671}
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\theauthor}
+\lhead{Weather-driven A\&E forecasting in Glasgow}
+\cfoot{\thepage}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+\begin{titlepage}
+	\centering
+    \includegraphics[width=4.2cm]{newlogo.png}\\[0.4 cm]
+    \text{Honours Project - \module}\\[0.5 cm]
+    \textsc{\LARGE FINAL REPORT}\\[0.5 cm]
+    \text{2026-27} \\[0.5 cm]
+    \text{\large Department of Computing} \\[0.5 cm]
+	\text{ Submitted for the Degree of:}\\[0.2 cm]
+	\degree \\[0.5 cm]
+	\begin{minipage}{0.8\textwidth}
+		\begin{flushleft} \large
+            \emph{Project Title: } \thetitle \\ [0.2 cm]
+            \emph{Name: } \theauthor \\ [0.2 cm]
+            \emph{Student ID: } \studentId \\ [0.2 cm]
+            \emph{Project Supervisor: } \supervisor \\ [0.2 cm]
+            \emph{Second Marker: } \secondmarker \\ [0.2 cm]
+            \emph{Word Count: } \wordcount \\
+            \text{\small (excluding contents pages, figures, tables, references and appendices)} \\ [0.2 cm]
+            \emph{Aligned to SDGs: } \sdgs \\ [0.4 cm]
+            \small{``Except where explicitly stated, all work in this report, including the appendices, is my own original work and has not been submitted elsewhere in fulfilment of the requirement of this or any other award''} \\ [0.4 cm]
+            \emph{Signed by Student:} \rule{4.5cm}{0.4pt}
+		\end{flushleft}
+	\end{minipage}\\[0.2 cm]
+	\vspace{3mm}
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushleft} Name: \\ \theauthor \end{flushleft}
+	\end{minipage}~
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushright} Date: \\ \thedate \end{flushright}
+	\end{minipage}
+	\vfill
+\end{titlepage}
+
+\begin{abstract}
+% TODO (about 250 to 350 words; write last): reasoning, main objective, approaches and technologies, actual solution, key evaluation findings.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\listoftables
+\listoffigures
+\newpage
+
+\section{Introduction}
+% TODO (about 1,000 words): background, research question, aim, objectives, hypotheses; say how far the question was answered.
+% Sources: ../main.tex (interim introduction), ../../docs/PROJECT_STATUS.md (hypotheses H1 and H2).
+
+\section{Literature and Technology Review}
+% TODO (about 1,600 words): update the interim review; flag what improved at the start of the chapter; add infection confounding.
+% Sources: ../main.tex, ../references.bib, ../sources_verification.md. Read the key papers in full first.
+
+\section{Execution}
+% TODO (about 3,400 words; 45 marks): the story of what was done, why, and how it follows from the literature.
+% Data and pipeline, features, models (baselines, GAMs, XGBoost), rolling-origin testing, alert definition, prototype design and its approval rules, testing.
+% Sources: ../../docs/ARCHITECTURE.md, ../../analysis/RESULTS.md, ../../analysis/data_quality.md, ../../prototype/README.md.
+% Interim facts to update: ../../docs/HANDOVER.md section 3.
+
+\section{Evaluation and Discussion}
+% TODO (about 2,400 words): results with discussion in each part; link to the literature; limits (GRI inconclusive, 13.2% with forecast weather, association not cause).
+% Sources: ../../analysis/results/results_tables.md, ../final_report_results_DRAFT.tex (an AI-assisted draft: rewrite in own words), ../../analysis/figures/.
+
+\section{Legal, Social, Ethical and Professional Issues}
+% TODO (about 700 words; the title must stay exactly as is): legal (data licences, data protection), social, ethical (include proof that the data terms allow the use and that it is aggregated), professional (self-reflection; disclose AI assistance as the policy requires).
+% Sources: ../../docs/ethics_evidence.md, the Ethics Decision Tool outcome (GCU Learn Gradebook).
+
+\section{Conclusions and Further Work}
+% TODO (about 800 words): final discussion of the conclusions, critical analysis of the project and its method, further work.
+
+\newpage
+\printbibliography
+
+\appendix
+\section{Appendices}
+% TODO: ethics evidence, extra result tables, and a link to the code (https://github.com/Stradok/glasgow-ae-early-warning). The full code is also submitted as a zip via Grade Centre.
+
+\end{document}

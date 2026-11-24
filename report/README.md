@@ -3,6 +3,8 @@
 ## Files
 - `main.tex`, `references.bib`, `images/`: the **interim report** (LaTeX, module template). `main.pdf` is its build (19 pages, 0 errors with latexmk).
 - `Interim_Report.docx`: a Word export of the same content (generated from the LaTeX; not opened in Word by the author of the script).
+- `final_report_PLAN.md`: structure, marks and word budget for the **final report** (about 10,000 words, six chapters), taken from the 2026-27 guidance and marking scheme. No report text.
+- `final/main.tex`: compilable skeleton of the final report (front page with the new SDG field, six chapter headings, `TODO` comments with the source files for each). Build: `cd final && latexmk -pdf main.tex`.
 - `final_report_results_DRAFT.tex`: draft Results, Discussion and Conclusion for the **final report** (due 9 Apr 2027). A base to rewrite
   in the student's own words, not final text. Every number comes from `../analysis/results/results_tables.md`.
 - `sources_verification.md`: links, quality grades and what was checked for each source (abstracts only; full texts not yet read).
